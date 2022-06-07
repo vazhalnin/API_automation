@@ -1,5 +1,5 @@
 import pytest
-import requests
+from lib.my_requests import MyRequests
 from lib.base_case import BaseCase
 from lib.assertions import Assertions
 
@@ -17,7 +17,7 @@ class TestUserAuth(BaseCase):
 
         # функция setup - код внутри неё автоматически вызывается перед запуском каждого теста, где она используется. туда кладём логику, с которой начинаются все тесты в классе
 
-        response1 = requests.post("https://playground.learnqa.ru/api/user/login", data=data)
+        response1 = MyRequests.post("/user/login", data=data)
         # отправляем POST запрос с боди из переменной data
 
         self.auth_sid = self.get_cookie(response1, "auth_sid")
@@ -31,8 +31,8 @@ class TestUserAuth(BaseCase):
 
     def test_user_auth(self):
 
-        response2 = requests.get(
-            "https://playground.learnqa.ru/api/user/login",
+        response2 = MyRequests.get(
+            "/user/auth",
             headers={"x-csrf-token": self.token},
             cookies={"auth_sid": self.auth_sid}
         )
@@ -51,13 +51,13 @@ class TestUserAuth(BaseCase):
 
 
         if condition == "no_cookie":
-            response2 = requests.get(
-                "https://playground.learnqa.ru/api/user/auth",
+            response2 = MyRequests.get(
+                "/user/auth",
                 headers={"x-csrf-token": self.token}
             )
         else:
-            response2 = requests.get(
-                "http://playground.learnqa.ru/api/user/auth",
+            response2 = MyRequests.get(
+                "/user/auth",
                 cookies={"auth_sid": self.auth_sid}
                 )
         # если переменная "Condition" = "No Cookie", тогда сделаем запрос без куки. Иначе - без токена.

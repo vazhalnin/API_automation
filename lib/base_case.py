@@ -1,6 +1,7 @@
 import json
-
 from requests import Response
+from _datetime import datetime
+
 class BaseCase:
     # в этом классе будут методы для получения куки и хедеров из ответов сервера по имени
     # суть методов: сначала в них передаём объект ответа, который получаем после запроса и имя, по которому из ответа получаем либо хедер, либо куки. если данных нет - тест упадёт
@@ -26,3 +27,21 @@ class BaseCase:
             # если парсинг прошёл успешно, делаем ассерт по имени name есть в ответе. и если всё ок, возвращаем  это значение
 
         return response_as_dict[name]
+
+
+    def prepare_registraion_data(self, email=None):
+        # всю логику по созданию нового пользователя мы вынесли из класса testuserregister, но сделали email входным параметром с дефолтным значением
+        # мы его можем передавать, а можем и не передавать. если не передать - он будет равен None, и будет сгенерирован рандомным образом
+        if email is None:
+            base_part = "learnqa"
+            domain = "example.com"
+            random_part = datetime.now().strftime("%m%d%Y%H%M%S")
+            email = f"{base_part}{random_part}@{domain}"
+
+        return {
+            'password': '123',
+            'username': '123',
+            'firstName': 'learnqa',
+            'lastName': 'learnqa',
+            'email': email
+        }
